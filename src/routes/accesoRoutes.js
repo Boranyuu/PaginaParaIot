@@ -1,4 +1,3 @@
-// src/routes/accesoRoutes.js
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
@@ -8,19 +7,18 @@ router.post('/acceder', async (req, res) => {
   if (!codigo) return res.render('error', { mensaje: 'Debe ingresar un código válido.' });
 
   try {
-    const token = codigo;
+    // Validar token con tu backend Railway
+    const usuariosResp = await axios.get('https://iot-backend-production-4413.up.railway.app/usuarios', {
+      headers: { Authorization: `Bearer ${codigo}` }
+    });
 
-    const [usuariosResp, historialResp] = await Promise.all([
-      axios.get('https://iot-backend-production-4413.up.railway.app/usuarios', {
-        headers: { Authorization: `Bearer ${token}` }
-      }),
-      axios.get('https://iot-backend-production-4413.up.railway.app/historial', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-    ]);
+    const historialResp = await axios.get('https://iot-backend-production-4413.up.railway.app/historial', {
+      headers: { Authorization: `Bearer ${codigo}` }
+    });
 
+    // Token válido, renderiza la página de acceso
     res.render('acceso', {
-      token,
+      token: codigo,
       usuarios: usuariosResp.data || [],
       historial: historialResp.data || []
     });
@@ -33,6 +31,5 @@ router.post('/acceder', async (req, res) => {
     res.render('error', { mensaje });
   }
 });
-
 
 module.exports = router;

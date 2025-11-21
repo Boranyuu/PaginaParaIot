@@ -1,132 +1,80 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <title>Acceso IoT</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-
 <body>
-  <!-- NAVBAR FIJO -->
   <nav class="navbar">
     <div id="Kalacam">
       <img src="/assets/imagen.jpeg" alt="Logo" />
       <h2>Kalacam Security</h2>
     </div>
     <div id="salir">
-      <a href="#" class="btn-salir" onclick="cerrarSesion(event)">Cerrar Sesión</a>
+      <a href="/" class="btn-salir">Cerrar Sesión</a>
     </div>
   </nav>
 
-  <!-- CONTENEDOR PRINCIPAL -->
   <div id="contenedor-principal">
-
-    <!-- ALERTAS -->
     <div id="alert-edicion" class="alert-container"></div>
 
-    <!-- SECCION USUARIOS -->
+    <!-- Usuarios -->
     <section id="seccion-usuarios">
       <h2>Lista de Usuarios</h2>
-      <div class="tabla-container">
-        <table id="usuarios-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Email</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (usuarios && usuarios.length > 0) { %>
-              <% usuarios.forEach(u => { %>
-                <tr>
-                  <td><%= u.id %></td>
-                  <td><%= u.nombre %></td>
-                  <td><%= u.apellido %></td>
-                  <td><%= u.email %></td>
-                  <td>
-                    <button class="btn-editar" onclick="mostrarEdicion(
-                      <%= u.id %>,
-                      '<%= (u.nombre || '').replace(/'/g, "\\'") %>',
-                      '<%= (u.apellido || '').replace(/'/g, "\\'") %>',
-                      '<%= (u.email || '').replace(/'/g, "\\'") %>'
-                    )">Editar Usuario</button>
-
-                    <button class="btn-eliminar" onclick="eliminarUsuario(<%= u.id %>)">
-                      Eliminar Usuario
-                    </button>
-                  </td>
-                </tr>
-              <% }) %>
-            <% } else { %>
+      <table id="usuarios-table">
+        <thead>
+          <tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          <% if (usuarios.length > 0) { %>
+            <% usuarios.forEach(u => { %>
               <tr>
-                <td colspan="5" style="text-align:center;">No hay usuarios disponibles</td>
+                <td><%= u.id %></td>
+                <td><%= u.nombre %></td>
+                <td><%= u.apellido %></td>
+                <td><%= u.email %></td>
+                <td>
+                  <button onclick="mostrarEdicion(<%= u.id %>, '<%= (u.nombre || '').replace(/'/g,"\\'") %>', '<%= (u.apellido || '').replace(/'/g,"\\'") %>', '<%= (u.email || '').replace(/'/g,"\\'") %>')">Editar</button>
+                  <button onclick="eliminarUsuario(<%= u.id %>)">Eliminar</button>
+                </td>
               </tr>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="5">No hay usuarios disponibles</td></tr>
+          <% } %>
+        </tbody>
+      </table>
     </section>
 
-    <!-- SECCION HISTORIAL -->
+    <!-- Historial -->
     <section id="seccion-historial">
       <h2>Historial de Acciones</h2>
-      <div id="filtros" class="filtros-container">
-        <div class="filtro-item">
-          <label for="usuarioFiltro">Usuario:</label>
-          <input type="text" id="usuarioFiltro" placeholder="Nombre o correo">
-        </div>
-        <div class="filtro-item">
-          <label for="fechaFiltro">Fecha:</label>
-          <input type="date" id="fechaFiltro">
-        </div>
-        <div class="filtro-item">
-          <button type="button" onclick="filtrarHistorial()">Filtrar</button>
-        </div>
-      </div>
-
-      <div id="historial-container" class="tabla-container">
-        <table id="historial-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Acción</th>
-              <th>Método</th>
-              <th>Endpoint</th>
-              <th>IP</th>
-              <th>User Agent</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (historial && historial.length > 0) { %>
-              <% historial.forEach(h => { %>
-                <tr>
-                  <td><%= h.id %></td>
-                  <td><%= h.accion %></td>
-                  <td><%= h.metodo %></td>
-                  <td><%= h.endpoint %></td>
-                  <td><%= h.ip %></td>
-                  <td><%= h.user_agent %></td>
-                  <td><%= h.fecha %></td>
-                </tr>
-              <% }) %>
-            <% } else { %>
+      <table id="historial-table">
+        <thead>
+          <tr><th>ID</th><th>Acción</th><th>Método</th><th>Endpoint</th><th>IP</th><th>User Agent</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+          <% if (historial.length > 0) { %>
+            <% historial.forEach(h => { %>
               <tr>
-                <td colspan="7" style="text-align:center;">No hay historial disponible</td>
+                <td><%= h.id %></td>
+                <td><%= h.accion %></td>
+                <td><%= h.metodo %></td>
+                <td><%= h.endpoint %></td>
+                <td><%= h.ip %></td>
+                <td><%= h.user_agent %></td>
+                <td><%= h.fecha %></td>
               </tr>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="7">No hay historial disponible</td></tr>
+          <% } %>
+        </tbody>
+      </table>
     </section>
+  </div>
 
-  </div> <!-- FIN CONTENEDOR PRINCIPAL -->
-
-  <!-- CONFIG GLOBAL PARA JS -->
   <script>
     window.TOKEN = "<%= token %>";
     window.HEADERS_AUTH = {
@@ -134,10 +82,6 @@
       "Content-Type": "application/json"
     };
   </script>
-
-  <!-- JS HISTORIAL Y USUARIOS -->
   <script src="/js/historial.js"></script>
-
 </body>
-
 </html>

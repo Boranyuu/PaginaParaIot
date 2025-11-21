@@ -1,14 +1,17 @@
 // =================== CONFIG ===================
 window.API_URL = "https://iot-backend-production-4413.up.railway.app";
 
-// Si TOKEN existe en localStorage, lo usamos
-window.TOKEN = localStorage.getItem("token") || null;
+// TOKEN desde localStorage
+window.TOKEN = window.TOKEN || localStorage.getItem("token");
 
 // HEADERS_AUTH dinámico según token
-window.HEADERS_AUTH = {
-  "Authorization": `Bearer ${window.TOKEN}`,
-  "Content-Type": "application/json"
-};
+function getHeaders() {
+  return {
+    "Authorization": `Bearer ${window.TOKEN}`,
+    "Content-Type": "application/json"
+  };
+}
+
 
 // =================== FILTRAR HISTORIAL ===================
 function filtrarHistorial() {
@@ -44,7 +47,7 @@ async function fetchAPI(endpoint, options = {}) {
     const res = await fetch(`${window.API_URL}${endpoint}`, {
       headers: { ...window.HEADERS_AUTH, ...(options.headers || {}) },
       method: options.method || 'GET',
-      body: options.body ? JSON.stringify(options.body) : undefined
+      body: options.method && options.method !== 'GET' && options.body ? JSON.stringify(options.body) : undefined
     });
 
     if (!res.ok) {
@@ -55,8 +58,19 @@ async function fetchAPI(endpoint, options = {}) {
     return await res.json();
   } catch (err) {
     console.error(err);
-    alert(err.message);
     throw err;
+  }
+}
+
+// =================== VALIDAR TOKEN ===================
+async function validarToken() {
+  if (!window.TOKEN) return false;
+  try {
+    // Llamada a endpoint de prueba que requiere token
+    await fetchAPI("/usuarios");
+    return true;
+  } catch (err) {
+    return false;
   }
 }
 
@@ -87,9 +101,9 @@ async function cargarUsuarios() {
       `;
       tbody.appendChild(fila);
     });
-
   } catch (err) {
-    console.error("Error cargando usuarios:", err);
+    alert("Token inválido o expirado. Debes iniciar sesión nuevamente.");
+    cerrarSesion();
   }
 }
 
@@ -133,32 +147,27 @@ async function guardarEdicion(id) {
   }
 
   try {
-    await fetchAPI(`/usuarios/${id}`, {
-      method: "PUT",
-      body: payload
-    });
-
+    await fetchAPI(`/usuarios/${id}`, { method: "PUT", body: payload });
     await cargarUsuarios();
     alert("Usuario actualizado correctamente");
     document.getElementById("alert-edicion").style.display = "none";
     document.getElementById("alert-edicion").innerHTML = "";
   } catch (err) {
-    console.error("Error guardando edición:", err);
-    alert("No se pudo actualizar el usuario");
+    alert("No se pudo actualizar el usuario. Token inválido o expirado.");
+    cerrarSesion();
   }
 }
 
 // =================== ELIMINAR USUARIO ===================
 async function eliminarUsuario(id) {
   if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
-
   try {
     await fetchAPI(`/usuarios/${id}`, { method: "DELETE" });
     alert("Usuario eliminado correctamente");
     cargarUsuarios();
   } catch (err) {
-    console.error("Error eliminando usuario:", err);
-    alert("No se pudo eliminar el usuario");
+    alert("No se pudo eliminar el usuario. Token inválido o expirado.");
+    cerrarSesion();
   }
 }
 
@@ -168,6 +177,11 @@ async function cargarHistorial() {
     const datos = await fetchAPI("/historial");
     const tbody = document.querySelector("#historial-table tbody");
     tbody.innerHTML = "";
+
+    if (!datos.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No hay historial disponible</td></tr>`;
+      return;
+    }
 
     datos.forEach(h => {
       const fila = document.createElement("tr");
@@ -179,36 +193,38 @@ async function cargarHistorial() {
         <td>${h.endpoint}</td>
         <td>${h.ip}</td>
         <td>${h.user_agent}</td>
-        <td>${h.fecha}</td>
+        <td>${h.fecha.split("T")[0]}</td>
       `;
       tbody.appendChild(fila);
     });
-  } catch (error) {
-    console.error("Error cargando historial:", error);
+  } catch (err) {
+    alert("No se pudo cargar el historial. Token inválido o expirado.");
+    cerrarSesion();
   }
 }
 
 // =================== CERRAR SESION ===================
-function cerrarSesion(event) {
-  event.preventDefault();
+function cerrarSesion() {
   window.TOKEN = null;
   localStorage.removeItem("token");
   window.location.href = "/";
 }
 
-// =================== EXPONER FUNCIONES AL GLOBAL ===================
+// =================== EXPONER FUNCIONES ===================
 window.eliminarUsuario = eliminarUsuario;
 window.mostrarEdicion = mostrarEdicion;
 window.filtrarHistorial = filtrarHistorial;
 window.cerrarSesion = cerrarSesion;
 
 // =================== AUTO CARGA ===================
-document.addEventListener("DOMContentLoaded", () => {
-  if (!window.TOKEN) {
-    // No hay token, redirige al login
-    window.location.href = "/";
+document.addEventListener("DOMContentLoaded", async () => {
+  const valido = await validarToken();
+  if (!valido) {
+    alert("Token inválido, debes iniciar sesión");
+    cerrarSesion();
     return;
   }
+
   cargarUsuarios();
   cargarHistorial();
 });
