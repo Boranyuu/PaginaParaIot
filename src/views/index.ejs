@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acceso IoT</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div id="login-container">
+    <h1 class="login-title">Kalacam Security</h1>
+    <img src="/assets/imagen.jpeg" alt="Logo Kalacam" class="login-logo" width="400" height="250">
+
+    <!-- Formulario clásico que envía POST al backend -->
+    <form action="/acceder" method="POST" class="login-form">
+      <input type="text" name="codigo" class="login-input" placeholder="Ingresa tu código" required />
+      <button type="submit" class="btn-entrar">Entrar</button>
+    </form>
+  </div>
+</body>
+</html>
