@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const config = require('./src/config/env');
 const app = express();
 
 // Middleware para parsear formularios y JSON
@@ -39,6 +40,6 @@ app.get('/dashboard', authMiddleware, (req, res) => {
 });
 
 // Puerto
-app.listen(3000, () => {
-  console.log('✅ Servidor corriendo en http://localhost:3000');
+app.listen(config.PORT, () => {
+  console.log(`✅ Servidor corriendo en http://localhost:${config.PORT}`);
 });

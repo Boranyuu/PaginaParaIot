@@ -1,5 +1,6 @@
 const axios = require('axios');
-const BACKEND_URL = 'https://iot-backend-production-4413.up.railway.app';
+const config = require('../config/env');
+const BACKEND_URL = config.API_URL;
 
 const validarCodigo = async (req, res) => {
   try {
@@ -16,7 +17,8 @@ const validarCodigo = async (req, res) => {
     res.render('acceso', {
       usuarios: usuariosResp.data || [],
       historial: historialResp.data || [],
-      token: codigo
+      token: codigo,
+      apiUrl: BACKEND_URL
     });
 
   } catch (error) {

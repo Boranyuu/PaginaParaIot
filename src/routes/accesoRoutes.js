@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const config = require('../config/env');
 
 router.post('/acceder', async (req, res) => {
   const codigo = req.body.codigo?.trim();
   if (!codigo) return res.render('error', { mensaje: 'Debe ingresar un código válido.' });
 
   try {
-    // Validar token con tu backend Railway
-    const usuariosResp = await axios.get('https://iot-backend-production-4413.up.railway.app/usuarios', {
+    // Validar token con tu backend
+    const usuariosResp = await axios.get(`${config.API_URL}/usuarios`, {
       headers: { Authorization: `Bearer ${codigo}` }
     });
 
-    const historialResp = await axios.get('https://iot-backend-production-4413.up.railway.app/historial', {
+    const historialResp = await axios.get(`${config.API_URL}/historial`, {
       headers: { Authorization: `Bearer ${codigo}` }
     });
 
@@ -20,7 +21,8 @@ router.post('/acceder', async (req, res) => {
     res.render('acceso', {
       token: codigo,
       usuarios: usuariosResp.data || [],
-      historial: historialResp.data || []
+      historial: historialResp.data || [],
+      apiUrl: config.API_URL
     });
 
   } catch (error) {

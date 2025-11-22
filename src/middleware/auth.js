@@ -1,5 +1,6 @@
 const axios = require('axios');
-const BACKEND_URL = 'https://iot-backend-production-4413.up.railway.app';
+const config = require('../config/env');
+const BACKEND_URL = config.API_URL;
 
 async function authMiddleware(req, res, next) {
   try {

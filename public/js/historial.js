@@ -1,5 +1,6 @@
 // =================== CONFIG ===================
-window.API_URL = "https://iot-backend-production-4413.up.railway.app";
+// API_URL se inyecta desde el servidor via EJS
+window.API_URL = window.API_URL || "http://localhost:8000"; // Fallback
 
 // TOKEN desde localStorage
 window.TOKEN = window.TOKEN || localStorage.getItem("token");
@@ -44,10 +45,25 @@ function filtrarHistorial() {
 // =================== FETCH API ===================
 async function fetchAPI(endpoint, options = {}) {
   try {
+    // Preparar headers
+    const headers = { ...getHeaders() };
+    
+    // Si el body es FormData, NO incluir Content-Type (el navegador lo hace automáticamente con el boundary)
+    const isFormData = options.body instanceof FormData;
+    if (isFormData) {
+      delete headers['Content-Type'];
+    }
+    
+    // Preparar el body
+    let body = undefined;
+    if (options.method && options.method !== 'GET' && options.body) {
+      body = isFormData ? options.body : JSON.stringify(options.body);
+    }
+
     const res = await fetch(`${window.API_URL}${endpoint}`, {
-      headers: { ...window.HEADERS_AUTH, ...(options.headers || {}) },
+      headers: { ...headers, ...(options.headers || {}) },
       method: options.method || 'GET',
-      body: options.method && options.method !== 'GET' && options.body ? JSON.stringify(options.body) : undefined
+      body: body
     });
 
     if (!res.ok) {
@@ -132,29 +148,40 @@ function mostrarEdicion(id, nombre, apellido, email) {
 
 // =================== GUARDAR EDICION ===================
 async function guardarEdicion(id) {
-  const payload = {};
   const nombre = document.getElementById("alert-nombre").value.trim();
   const apellido = document.getElementById("alert-apellido").value.trim();
   const email = document.getElementById("alert-email").value.trim();
 
-  if (nombre) payload.nombre = nombre;
-  if (apellido) payload.apellido = apellido;
-  if (email) payload.email = email;
+  // Crear FormData para enviar (la API espera Form, no JSON)
+  const formData = new FormData();
+  let hayCambios = false;
 
-  if (Object.keys(payload).length === 0) {
+  if (nombre) {
+    formData.append('nombre', nombre);
+    hayCambios = true;
+  }
+  if (apellido) {
+    formData.append('apellido', apellido);
+    hayCambios = true;
+  }
+  if (email) {
+    formData.append('email', email);
+    hayCambios = true;
+  }
+
+  if (!hayCambios) {
     alert("No hay cambios para guardar.");
     return;
   }
 
   try {
-    await fetchAPI(`/usuarios/${id}`, { method: "PUT", body: payload });
+    await fetchAPI(`/usuarios/${id}`, { method: "PUT", body: formData });
     await cargarUsuarios();
     alert("Usuario actualizado correctamente");
     document.getElementById("alert-edicion").style.display = "none";
     document.getElementById("alert-edicion").innerHTML = "";
   } catch (err) {
-    alert("No se pudo actualizar el usuario. Token inválido o expirado.");
-    cerrarSesion();
+    alert(`No se pudo actualizar el usuario: ${err.message}`);
   }
 }
 
