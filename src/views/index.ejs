@@ -6,23 +6,76 @@
   <title>Acceso IoT - Kalacam Security</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
-  <main id="login-container">
-    <h1 class="login-title">Kalacam Security</h1>
-    <img src="/assets/imagen.jpeg" alt="Logo Kalacam Security" class="login-logo" width="400" height="250">
-    
-    <form action="/acceder" method="POST" class="login-form" autocomplete="off">
-      <label for="codigo" class="sr-only">Código de acceso</label>
-      <input 
-        type="number" 
-        name="codigo" 
-        id="codigo" 
-        class="login-input" 
-        placeholder="Ingresa tu código" 
-        required 
-      />
-      <button type="submit" class="btn-entrar">Entrar</button>
-    </form>
-  </main>
+<body id="login-body">
+
+  <!-- CONTENEDOR GENERAL DE CENTRADO -->
+  <div id="login-wrapper" class="login-wrapper">
+
+    <!-- CONTENEDOR PRINCIPAL DEL LOGIN -->
+    <main id="login-container" class="login-container">
+
+      <!-- TÍTULO -->
+      <h1 id="login-title" class="login-title">
+        Kalacam Security
+      </h1>
+
+      <!-- CONTENEDOR DE LOGO -->
+      <div id="login-logo-container" class="login-logo-container">
+        <img 
+          src="/assets/imagen.jpeg" 
+          alt="Logo Kalacam Security" 
+          id="login-logo" 
+          class="login-logo"
+          width="400" 
+          height="250"
+        >
+      </div>
+
+      <!-- FORMULARIO -->
+      <form 
+        id="login-form" 
+        class="login-form" 
+        action="/acceder" 
+        method="POST" 
+        autocomplete="off"
+      >
+
+        <!-- GRUPO INPUT -->
+        <div id="login-input-group" class="login-input-group">
+          <label 
+            for="codigo" 
+            id="login-label-codigo" 
+            class="login-label sr-only"
+          >
+            Código de acceso
+          </label>
+
+          <input 
+            type="number" 
+            name="codigo" 
+            id="login-input-codigo" 
+            class="login-input" 
+            placeholder="Ingresa tu código" 
+            required
+          />
+        </div>
+
+        <!-- BOTÓN -->
+        <div id="login-button-container" class="login-button-container">
+          <button 
+            type="submit" 
+            id="login-button-submit" 
+            class="btn-entrar login-button"
+          >
+            Entrar
+          </button>
+        </div>
+
+      </form>
+
+    </main>
+
+  </div>
+
 </body>
 </html>

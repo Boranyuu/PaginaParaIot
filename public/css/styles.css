@@ -1,5 +1,6 @@
 /* === RESET GENERAL === */
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -10,45 +11,82 @@ html, body {
   box-sizing: border-box;
 }
 
-/* BODY CENTRALIZADO */
+/* BODY GENERAL */
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 100px; /* espacio para navbar fijo */
+  padding-top: 90px;
+  /* espacio navbar */
   overflow-y: auto;
 }
 
-/* CONTENEDORES PRINCIPALES */
-.login-container,
-#centrarItems2,
-#contenedor-principal {
+
+div#navbar-sesion {
+  padding: 40px;
+}
+
+/* ================= CONTENEDORES GENERALES ================= */
+
+#pagina-panel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#contenedor-principal-panel {
+    width: 100%;
+    max-width: 1200px;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 60px;
+}
+
+
+/* ================= LOGIN CENTRADO ================= */
+
+#login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  padding: 20px;
   gap: 20px;
 }
 
-/* TITULOS */
-h1, h2 {
+
+/* ================= TITULOS ================= */
+
+h1,
+h2 {
   color: #F01704;
-  margin: 10px 0 20px;
+  margin: 10px 0 15px;
   text-align: center;
 }
 
-/* LOGO */
-.login-logo, #Kalacam img {
+
+/* ================= LOGOS ================= */
+
+.login-logo,
+.logo-navbar {
   max-width: 200px;
   height: auto;
   border-radius: 10px;
 }
 
-/* FORMULARIOS */
-form, .login-form {
+
+/* ================= FORMULARIOS ================= */
+
+form,
+.login-form {
   background: #111;
   color: white;
   padding: 25px;
@@ -62,6 +100,7 @@ form, .login-form {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="date"] {
   width: 100%;
   padding: 12px;
@@ -73,82 +112,52 @@ input[type="date"] {
   font-size: 14px;
 }
 
-/* BOTONES */
-button, .btn-entrar {
+
+/* ================= BOTONES ================= */
+
+button,
+.btn-entrar,
+.btn-editar,
+.btn-eliminar {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   background-color: #F01704;
   color: white;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
   border-radius: 25px;
   border: none;
   font-weight: bold;
+  transition: background 0.2s ease;
 }
 
-button:hover, .btn-entrar:hover {
+button:hover,
+.btn-entrar:hover,
+.btn-editar:hover,
+.btn-eliminar:hover {
   background-color: #ff3b2e;
-  transform: scale(1.05);
 }
 
-/* ALERTA EDICIÓN */
+
+/* ================= ALERTA EDICIÓN ================= */
+
 #alert-edicion {
-  display: none; /* se muestra solo cuando se activa */
+  display: none;
   background-color: #111;
-  color: white;
   padding: 20px;
-  margin: 20px auto;
   border-radius: 12px;
   border: 1px solid #444;
   width: 90%;
   max-width: 400px;
+  margin: auto;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  z-index: 1000;
 }
 
-#alert-edicion input[type="text"] {
+#alert-edicion input {
   width: 90%;
   padding: 10px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: white;
-  text-align: center;
-  font-size: 14px;
+  margin: 6px 0;
 }
 
-#alert-edicion button {
-  width: 40%;
-  padding: 10px;
-  margin: 5px;
-  border: none;
-  border-radius: 25px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-#alert-edicion #guardar-btn {
-  background-color: #F01704;
-  color: white;
-}
-
-#alert-edicion #guardar-btn:hover {
-  background-color: #ff3b2e;
-  transform: scale(1.05);
-}
-
-#alert-edicion #cancelar-btn {
-  background-color: #444;
-  color: white;
-}
-
-#alert-edicion #cancelar-btn:hover {
-  background-color: #666;
-  transform: scale(1.05);
-}
 
 /* NAVBAR */
 .navbar {
@@ -177,116 +186,163 @@ button:hover, .btn-entrar:hover {
   font-size: 24px;
 }
 
-/* BOTÓN SALIR */
-#salir .btn-salir {
+
+
+/* ================= BOTÓN CERRAR SESIÓN ================= */
+
+.btn-salir {
   background-color: #F01704;
   color: white;
   text-decoration: none;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: bold;
-  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-#salir .btn-salir:hover {
-  background-color: #ff3b2e;
-  transform: scale(1.05);
+
+/* ================= SECCIONES ================= */
+
+.bloque-seccion {
+  background-color: #0b0b23;
+  padding: 20px;
+  border-radius: 14px;
 }
 
-/* TABLAS OSCURAS */
-table {
+.seccion-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+
+/* ================= TABLAS ================= */
+
+.tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-datos {
   width: 100%;
   border-collapse: collapse;
   background-color: #0b0b23;
   color: #f1f1f1;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 12px;
-  text-align: left;
   border-bottom: 1px solid #222;
+  text-align: center;
 }
 
 th {
   background-color: #00362f;
-  color: white;
 }
 
-tr:hover {
-  background-color: #1a1a3a;
-  transition: background 0.3s ease;
+
+/* ================= IMAGEN USUARIO ================= */
+
+.foto-usuario {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-/* SCROLL HISTORIAL */
+
+/* ================= ACCIONES ================= */
+
+.col-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+
+/* ================= SIN DATOS ================= */
+
+.sin-datos {
+  text-align: center;
+  font-style: italic;
+}
+
+
+/* ================= HISTORIAL SCROLL ================= */
+
 #historial-container {
   max-height: 400px;
   overflow-y: auto;
-  width: 100%;
 }
 
-/* FILTROS */
-/* FILTROS */
+
+/* ================= FILTROS ================= */
+
 #filtros {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
   gap: 10px;
-  padding: 10px;
   margin-bottom: 20px;
 }
 
-#filtros label {
-  font-weight: bold;
-  margin-right: 5px;
+/* ================= MODAL EDITAR ================= */
+
+.modal-editar {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
 }
 
-#filtros input[type="text"],
-#filtros input[type="date"] {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: white;
-  width: 150px;
-  text-align: center;
-  font-size: 14px;
+.modal-contenido {
+  background: #111;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-#filtros button {
-  padding: 10px 15px;
+.modal-contenido input {
+  padding: 10px;
+  border-radius: 8px;
   border: none;
-  border-radius: 20px;
-  background-color: #F01704;
+  background: #222;
   color: white;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-#filtros button:hover {
-  background-color: #ff3b2e;
-  transform: scale(1.05);
+.modal-botones {
+  display: flex;
+  gap: 10px;
 }
 
-/* RESPONSIVE */
+.modal-botones button {
+  flex: 1;
+}
+
+
+
+/* ================= RESPONSIVE ================= */
+
 @media (max-width: 768px) {
-  #filtros {
+
+  body {
+    padding-top: 120px;
+  }
+
+  .col-acciones {
     flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
   }
 
-  #filtros input[type="text"],
-  #filtros input[type="date"] {
-    width: 100%;
+  .tabla-datos th,
+  .tabla-datos td {
+    font-size: 12px;
   }
 
-  #filtros button {
-    width: 100%;
-  }
 }
-

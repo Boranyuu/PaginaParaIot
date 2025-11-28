@@ -1,45 +1,62 @@
 const express = require('express');
 const path = require('path');
+const axios = require('axios');
 const config = require('./src/config/env');
+
 const app = express();
 
-// Middleware para parsear formularios y JSON
+// ================= MIDDLEWARE =================
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Configuración de EJS
+// ================= EJS =================
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Archivos estáticos
+// ================= ESTÁTICOS =================
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
 
-// Middleware de autenticación simple
+// ================= AUTH SIMPLE =================
 function authMiddleware(req, res, next) {
   const token = req.body.token || req.query.token || req.headers['authorization'];
-  if (!token) return res.redirect('/'); // si no hay token, redirige al login
-  req.token = token; // guardamos el token en la request
+  if (!token) return res.redirect('/');
+  req.token = token.replace('Bearer ', '');
   next();
 }
 
-// Rutas
+// ================= RUTAS BASE =================
 const accesoRoutes = require('./src/routes/accesoRoutes');
 app.use('/', accesoRoutes);
 
-// GET / --> login
+// ================= LOGIN =================
 app.get('/', (req, res) => {
-  res.render('index'); 
+  res.render('index');
 });
 
-// GET /dashboard --> ejemplo de ruta protegida
-app.get('/dashboard', authMiddleware, (req, res) => {
-  // Aquí podrías usar req.token para validar con tu backend
-  res.render('acceso', { token: req.token });
+// ================= DASHBOARD =================
+app.get('/dashboard', authMiddleware, async (req, res) => {
+  try {
+    const token = req.token;
+
+    // Ejemplo: aquí deberías traer usuarios e historial desde backend
+    const usuarios = [];
+    const historial = [];
+
+    res.render('acceso', {
+      token,
+      apiUrl: config.API_URL,
+      usuarios,
+      historial
+    });
+  } catch (error) {
+    console.error(error);
+    res.redirect('/');
+  }
 });
 
-// Puerto
+// ================= SERVIDOR =================
 app.listen(config.PORT, () => {
   console.log(`✅ Servidor corriendo en http://localhost:${config.PORT}`);
 });

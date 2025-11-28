@@ -2,87 +2,142 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Acceso IoT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel IoT - Kalacam Security</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-<body>
-  <nav class="navbar">
-    <div id="Kalacam">
-      <img src="/assets/imagen.jpeg" alt="Logo" />
-      <h2>Kalacam Security</h2>
+
+<!-- ================= MODAL EDITAR USUARIO ================= -->
+<div id="modal-editar" class="modal-editar" style="display:none;">
+  <div class="modal-contenido">
+    <h2>Editar Usuario</h2>
+
+    <input type="hidden" id="edit-id">
+
+    <label>Nombre</label>
+    <input type="text" id="edit-nombre">
+
+    <label>Apellido</label>
+    <input type="text" id="edit-apellido">
+
+    <label>Email</label>
+    <input type="email" id="edit-email">
+
+    <div class="modal-botones">
+      <button onclick="guardarEdicion()">Guardar</button>
+      <button onclick="cerrarModal()">Cancelar</button>
     </div>
-    <div id="salir">
+  </div>
+</div>
+
+<body>
+
+<header id="header-principal">
+  <nav class="navbar" id="navbar-principal">
+    <div id="navbar-logo">
+      <img src="/assets/imagen.jpeg" alt="Logo Kalacam" class="logo-navbar"/>
+      <h2 class="titulo-navbar">Kalacam Security</h2>
+    </div>
+
+    <div id="navbar-sesion">
       <a href="/" class="btn-salir">Cerrar Sesión</a>
     </div>
   </nav>
+</header>
 
-  <div id="contenedor-principal">
-    <div id="alert-edicion" class="alert-container"></div>
+<div id="pagina-panel">
+  <div id="contenedor-principal-panel">
 
-    <!-- Usuarios -->
-    <section id="seccion-usuarios">
-      <h2>Lista de Usuarios</h2>
-      <table id="usuarios-table">
-        <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-          <% if (usuarios.length > 0) { %>
-            <% usuarios.forEach(u => { %>
+    <div id="contenedor-alertas">
+      <div id="alert-edicion" class="alert-container"></div>
+    </div>
+
+    <section id="seccion-usuarios" class="bloque-seccion">
+
+      <div class="seccion-header">
+        <h2 class="titulo-seccion">Lista de Usuarios</h2>
+      </div>
+
+      <div class="tabla-contenedor">
+        <table id="usuarios-table" class="tabla-datos">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Email</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% if (usuarios && usuarios.length > 0) { %>
+              <% usuarios.forEach(u => { %>
+                <tr>
+
+                  <td class="col-foto">
+                    <% 
+                      const DEFAULT_IMAGE = `${apiUrl}/imagenes/usuarios/default.png`;
+                      let nombreImagen = u.imagen || "";
+                      nombreImagen = nombreImagen.replace(/^usuarios\//, "");
+                      const imagenUrl = u.imagen
+                        ? `${apiUrl}/imagenes/usuarios/${nombreImagen}`
+                        : DEFAULT_IMAGE;
+                    %>
+
+                    <img
+                      src="<%= imagenUrl %>"
+                      alt="Foto usuario"
+                      class="foto-usuario"
+                      onerror="this.onerror=null; this.src='<%= DEFAULT_IMAGE %>';"
+                    >
+                  </td>
+
+                  <td><%= u.id %></td>
+                  <td><%= u.nombre %></td>
+                  <td><%= u.apellido %></td>
+                  <td><%= u.email %></td>
+
+                  <td class="col-acciones">
+                    <button class="btn-editar"
+                      onclick="mostrarEdicion(
+                        <%= u.id %>,
+                        '<%= u.nombre.replace(/'/g, "\\'") %>',
+                        '<%= u.apellido.replace(/'/g, "\\'") %>',
+                        '<%= u.email.replace(/'/g, "\\'") %>'
+                      )">
+                      Editar
+                    </button>
+
+                    <button class="btn-eliminar"
+                      onclick="eliminarUsuario(<%= u.id %>)">
+                      Eliminar
+                    </button>
+                  </td>
+
+                </tr>
+              <% }) %>
+            <% } else { %>
               <tr>
-                <td><%= u.id %></td>
-                <td><%= u.nombre %></td>
-                <td><%= u.apellido %></td>
-                <td><%= u.email %></td>
-                <td>
-                  <button onclick="mostrarEdicion(<%= u.id %>, '<%= (u.nombre || '').replace(/'/g,"\\'") %>', '<%= (u.apellido || '').replace(/'/g,"\\'") %>', '<%= (u.email || '').replace(/'/g,"\\'") %>')">Editar</button>
-                  <button onclick="eliminarUsuario(<%= u.id %>)">Eliminar</button>
-                </td>
+                <td colspan="6" class="sin-datos">No hay usuarios disponibles</td>
               </tr>
-            <% }) %>
-          <% } else { %>
-            <tr><td colspan="5">No hay usuarios disponibles</td></tr>
-          <% } %>
-        </tbody>
-      </table>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- Historial -->
-    <section id="seccion-historial">
-      <h2>Historial de Acciones</h2>
-      <table id="historial-table">
-        <thead>
-          <tr><th>ID</th><th>Acción</th><th>Método</th><th>Endpoint</th><th>IP</th><th>User Agent</th><th>Fecha</th></tr>
-        </thead>
-        <tbody>
-          <% if (historial.length > 0) { %>
-            <% historial.forEach(h => { %>
-              <tr>
-                <td><%= h.id %></td>
-                <td><%= h.accion %></td>
-                <td><%= h.metodo %></td>
-                <td><%= h.endpoint %></td>
-                <td><%= h.ip %></td>
-                <td><%= h.user_agent %></td>
-                <td><%= h.fecha %></td>
-              </tr>
-            <% }) %>
-          <% } else { %>
-            <tr><td colspan="7">No hay historial disponible</td></tr>
-          <% } %>
-        </tbody>
-      </table>
-    </section>
   </div>
+</div>
 
-  <script>
-    window.TOKEN = "<%= token %>";
-    window.API_URL = "<%= apiUrl %>";
-    window.HEADERS_AUTH = {
-      "Authorization": `Bearer ${window.TOKEN}`,
-      "Content-Type": "application/json"
-    };
-  </script>
-  <script src="/js/historial.js"></script>
+<script>
+  window.API_URL = "<%= apiUrl %>";
+  window.TOKEN = "<%= token %>";
+</script>
+
+<!-- ✅ SOLO ESTE SCRIPT MANEJA TODO -->
+<script src="/js/historial.js"></script>
+
 </body>
 </html>
